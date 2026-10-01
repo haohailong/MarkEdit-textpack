@@ -18,6 +18,22 @@ const simplifiedChinese = {
   failure: detail => `无法导出当前文档。${detail}`,
 };
 
+const traditionalChinese = {
+  menuTitle: '匯出為 Textpack…',
+  successTitle: 'Textpack 匯出完成',
+  failureTitle: 'Textpack 匯出失敗',
+  included: count => `已收錄 ${count} 個本機資源。`,
+  missing: count => `${count} 個本機資源無法讀取，原始連結已保留。請檢查檔案位置，或授予 MarkEdit 存取其所在資料夾的權限。`,
+  external: count => `${count} 個非本機連結維持不變。`,
+  failure: detail => `無法匯出目前的文件。${detail}`,
+};
+
 export function messagesForLanguage(language) {
-  return /^zh(?:-|$)/i.test(language || '') ? simplifiedChinese : english;
+  const subtags = (language || '').toLowerCase().split('-');
+  if (subtags[0] !== 'zh') return english;
+  if (subtags.includes('hant') || (!subtags.includes('hans') &&
+    subtags.some(subtag => ['tw', 'hk', 'mo'].includes(subtag)))) {
+    return traditionalChinese;
+  }
+  return simplifiedChinese;
 }

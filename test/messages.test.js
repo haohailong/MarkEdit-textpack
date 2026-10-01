@@ -16,8 +16,25 @@ test('provides complete English copy, including singular and plural outcomes', (
   assert.match(messages.failure('Disk full'), /The document could not be exported\. Disk full/);
 });
 
-test('uses Chinese for Chinese locales and English for other locales', () => {
-  assert.match(messagesForLanguage('zh-CN').successTitle, /导出完成/);
+test('selects Simplified or Traditional Chinese by script and region', () => {
+  for (const language of ['zh', 'zh-CN', 'zh-SG', 'zh-Hans', 'zh-Hans-TW']) {
+    assert.equal(messagesForLanguage(language).menuTitle, '导出为 Textpack…', language);
+  }
+  for (const language of ['zh-Hant', 'zh-TW', 'zh-HK', 'zh-MO', 'zh-Hant-CN']) {
+    assert.equal(messagesForLanguage(language).menuTitle, '匯出為 Textpack…', language);
+  }
   assert.equal(messagesForLanguage('fr-FR').successTitle, 'Textpack export complete');
   assert.equal(messagesForLanguage(undefined).successTitle, 'Textpack export complete');
+});
+
+test('provides Traditional Chinese text for the full export flow', () => {
+  const messages = messagesForLanguage('zh-Hant-TW');
+  assert.equal(messages.menuTitle, '匯出為 Textpack…');
+  assert.equal(messages.successTitle, 'Textpack 匯出完成');
+  assert.equal(messages.failureTitle, 'Textpack 匯出失敗');
+  assert.equal(messages.included(2), '已收錄 2 個本機資源。');
+  assert.match(messages.missing(1), /1 個本機資源無法讀取，原始連結已保留/);
+  assert.match(messages.missing(1), /請檢查檔案位置，或授予 MarkEdit 存取其所在資料夾的權限/);
+  assert.equal(messages.external(2), '2 個非本機連結維持不變。');
+  assert.equal(messages.failure('磁碟已滿'), '無法匯出目前的文件。磁碟已滿');
 });
