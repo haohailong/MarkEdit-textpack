@@ -1,6 +1,6 @@
 {
   "name": "markedit-textpack",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "author": "Hailong Hao",
   "description": "Export the current MarkEdit document as a TextPack archive.",
@@ -11,7 +11,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "test": "node --test"
+    "test": "npm run build && node --test"
   },
   "license": "MIT",
   "dependencies": {
