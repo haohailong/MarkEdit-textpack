@@ -49,6 +49,16 @@ function localPath(url, documentInfo, homePath) {
   return normalizePath(documentInfo.parentPath + '/' + path);
 }
 
+function encodeAssetName(name) {
+  return encodeURIComponent(name).replace(/[!'()*]/g, char =>
+    `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
+}
+
+function originalSuffix(url) {
+  const index = url.search(/[?#]/);
+  return index < 0 ? '' : url.slice(index).replace(/[!'()*<>"\s\\]/g, char => encodeAssetName(char));
+}
+
 function safeFilename(path, extension) {
   let name = path.split('/').pop() || 'image';
   name = name.replace(/[\u0000-\u001f\u007f<>:"\\|?*]/g, '_');
@@ -123,7 +133,7 @@ export async function createTextpack(markdown, documentInfo, { getFileObject, ho
     }
     const archivePath = cached.get(path);
     if (archivePath) {
-      const encoded = `assets/${encodeURIComponent(archivePath.slice('assets/'.length))}`;
+      const encoded = `assets/${encodeAssetName(archivePath.slice('assets/'.length))}${originalSuffix(destination.url)}`;
       replacements.push({ ...destination, value: destination.html ? encoded.replaceAll('&', '&amp;') : encoded });
     }
   }

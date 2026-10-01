@@ -70,18 +70,67 @@ function htmlAssetRanges(source, node) {
   if (start === undefined || end === undefined) return [];
   const raw = source.slice(start, end);
   const matches = [];
-  const tags = /<(img|a)\b[^>]*>/gi;
-  for (const tag of raw.matchAll(tags)) {
-    const attributeName = tag[1].toLowerCase() === 'img' ? 'src' : 'href';
-    const attribute = new RegExp(`\\b${attributeName}\\s*=\\s*(["'])(.*?)\\1`, 'i').exec(tag[0]);
-    if (!attribute) continue;
-    const valueOffset = attribute.index + attribute[0].indexOf(attribute[2]);
-    matches.push({
-      url: attribute[2].replaceAll('&amp;', '&'),
-      from: start + tag.index + valueOffset,
-      to: start + tag.index + valueOffset + attribute[2].length,
-      html: true,
-    });
+  let index = 0;
+  while (index < raw.length) {
+    if (raw.startsWith('<!--', index)) {
+      const commentEnd = raw.indexOf('-->', index + 4);
+      index = commentEnd < 0 ? raw.length : commentEnd + 3;
+      continue;
+    }
+    if (raw[index] !== '<') {
+      index++;
+      continue;
+    }
+    const tag = /^<([a-z][a-z\d:-]*)\b/i.exec(raw.slice(index));
+    if (!tag) {
+      index++;
+      continue;
+    }
+    const attributeName = tag[1].toLowerCase() === 'img' ? 'src'
+      : tag[1].toLowerCase() === 'a' ? 'href' : undefined;
+    let cursor = index + tag[0].length;
+    let matched = false;
+    while (cursor < raw.length) {
+      while (/\s/.test(raw[cursor])) cursor++;
+      if (raw[cursor] === '>') {
+        cursor++;
+        break;
+      }
+      if (raw[cursor] === '/' && raw[cursor + 1] === '>') {
+        cursor += 2;
+        break;
+      }
+      const nameStart = cursor;
+      while (cursor < raw.length && !/[\s=/>]/.test(raw[cursor])) cursor++;
+      if (cursor === nameStart) {
+        cursor++;
+        continue;
+      }
+      const name = raw.slice(nameStart, cursor).toLowerCase();
+      while (/\s/.test(raw[cursor])) cursor++;
+      if (raw[cursor] !== '=') continue;
+      cursor++;
+      while (/\s/.test(raw[cursor])) cursor++;
+      const quote = raw[cursor] === '"' || raw[cursor] === "'" ? raw[cursor++] : undefined;
+      const valueStart = cursor;
+      if (quote) {
+        while (cursor < raw.length && raw[cursor] !== quote) cursor++;
+      } else {
+        while (cursor < raw.length && !/[\s>]/.test(raw[cursor])) cursor++;
+      }
+      const valueEnd = cursor;
+      if (quote && cursor < raw.length) cursor++;
+      if (attributeName && name === attributeName && quote && !matched) {
+        matches.push({
+          url: raw.slice(valueStart, valueEnd).replaceAll('&amp;', '&'),
+          from: start + valueStart,
+          to: start + valueEnd,
+          html: true,
+        });
+        matched = true;
+      }
+    }
+    index = cursor;
   }
   return matches;
 }
