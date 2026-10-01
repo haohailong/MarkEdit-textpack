@@ -111,7 +111,7 @@ export async function createTextpack(markdown, documentInfo, { getFileObject, ho
       } catch {
         // A missing sandbox permission should not prevent exporting the text.
       }
-      if (!file?.data) {
+      if (typeof file?.data !== 'string') {
         cached.set(path, null);
         missing.push(destination.url);
       } else {

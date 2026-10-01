@@ -2,7 +2,12 @@
   "name": "markedit-textpack",
   "version": "0.1.0",
   "private": true,
+  "author": "Hailong Hao",
   "description": "Export the current MarkEdit document as a TextPack archive.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haohailong/MarkEdit-textpack.git"
+  },
   "type": "module",
   "scripts": {
     "build": "vite build",

@@ -94,3 +94,15 @@ test('continues after a read error and avoids duplicate asset names', async () =
   assert.equal(result.assetCount, 2);
   assert.deepEqual(result.missing, ['denied.png']);
 });
+
+test('includes a readable empty local file', async () => {
+  const result = await createTextpack('[empty](empty.txt)', { parentPath: '/docs' }, {
+    getFileObject: async () => ({ data: '' }),
+  });
+  const archive = unzipSync(result.archive);
+  assert.ok(Object.hasOwn(archive, 'assets/empty.txt'));
+  assert.equal(archive['assets/empty.txt'].length, 0);
+  assert.equal(result.assetCount, 1);
+  assert.deepEqual(result.missing, []);
+  assert.match(strFromU8(archive['text.md']), /\[empty\]\(assets\/empty\.txt\)/);
+});
