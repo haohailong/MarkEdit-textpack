@@ -1,0 +1,19 @@
+{
+  "name": "markedit-textpack",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Export the current MarkEdit document as a TextPack archive.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test": "node --test"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "fflate": "^0.8.2",
+    "mdast-util-from-markdown": "^2.0.2"
+  },
+  "devDependencies": {
+    "vite": "^8.0.0"
+  }
+}
