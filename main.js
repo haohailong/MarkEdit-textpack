@@ -38,5 +38,6 @@ async function exportTextpack() {
 
 MarkEdit.addMainMenuItem({
   title: messages.menuTitle,
+  icon: 'doc.zipper',
   action: () => { void exportTextpack(); },
 });

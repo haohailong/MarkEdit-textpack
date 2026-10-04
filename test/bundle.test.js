@@ -49,6 +49,7 @@ test('built script exports corrected links and Traditional Chinese alerts', asyn
   });
 
   assert.equal(menuItem.title, '匯出為 Textpack…');
+  assert.equal(menuItem.icon, 'doc.zipper');
   menuItem.action();
   await alertShown;
 

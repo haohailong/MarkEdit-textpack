@@ -14,7 +14,7 @@ To install a build from this checkout manually:
 
 ## Export
 
-Choose **Extensions → Export as Textpack…** and select a destination in MarkEdit's save panel. The suggested filename comes from the current document. Canceling the panel creates no file. Exporting does not modify the document.
+Choose **Extensions → Export as Textpack…** (the document-with-zipper icon) and select a destination in MarkEdit's save panel. The suggested filename comes from the current document. Canceling the panel creates no file. Exporting does not modify the document.
 
 The extension copies readable local files referenced by inline or reference-style Markdown images and links, plus quoted `src` attributes on HTML `<img>` elements and quoted `href` attributes on HTML `<a>` elements. Relative paths are resolved from the saved document's folder; absolute paths and local `file:` URLs are also supported. Each local file is stored once in `assets/`, and its links in `text.md` are rewritten to the bundled copy.
 
